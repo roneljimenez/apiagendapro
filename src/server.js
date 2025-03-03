@@ -7,9 +7,9 @@ const app = express();
 app.use(express.json());
 app.use("/api", routes);
 
-// mongoose
-//   .connect(process.env.MONGO_URI)
-//   .then(() => console.log("Conectado a MongoDB"))
-//   .catch((err) => console.error("Error en MongoDB", err));
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("Conectado a MongoDB"))
+  .catch((err) => console.error("Error en MongoDB", err));
 
 app.listen(3000, () => console.log("Servidor en http://localhost:3000"));
