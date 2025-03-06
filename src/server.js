@@ -1,10 +1,13 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
 const routes = require("./routes");
 
 const app = express();
 app.use(express.json());
+// Middleware para analizar application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api", routes);
 
 mongoose

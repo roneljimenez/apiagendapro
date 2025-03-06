@@ -1,4 +1,5 @@
 const axios = require('axios');
+const qs = require('qs');
 const Client = require("./models");
 
 //Valores de entorno
@@ -94,7 +95,7 @@ async function getClientBookings(req, res) {
         // Responder con los datos obtenidos
         return res.status(200).json({ bookings: response.data });
       }else{
-        res.status(500).json({ error: "Error al obtener las reservas del cliente" });
+        return res.status(500).json({ error: "Error al obtener las reservas del cliente" });
       }
 
   } catch (error) {
@@ -114,4 +115,152 @@ async function getClientBookings(req, res) {
 
 }
 
-module.exports = {getClients, getClientBookings, getClientId};
+async function modifyClientBook(req, res) {
+
+  try {
+    const bookingId = req.params['bookingId'] ? req.params['bookingId'] : "";
+    //start: fecha de inicio, end: fecha fin, status_id: estado actual de la reserva
+    const { start, end, status_id } = req.body;
+
+    // Datos a enviar
+    const data = qs.stringify({
+      start: start,
+      end: end,
+      status_id: status_id
+    });
+    // Configuración de la solicitud
+    const config = {
+      method: 'patch',
+      url: `${URL_AGENDAPRO}/bookings/${bookingId}`,
+      auth: {
+        username: AGENDAPRO_USERNAME,
+        password: AGENDAPRO_PASSWORD
+      },
+      headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      data: data
+    };
+    
+    // Enviar la solicitud
+    axios(config)
+    .then(response => {
+        //console.log('Respuesta:', response.data);
+        return res.status(200).json({ response: "Reserva actualizada exitosamente", detail: response.data });
+    })
+    .catch(error => {
+      console.error("Error en modifyClientBook:", error.message);
+      if (error.response) {
+        return res.status(error.response.status).json({
+          error: "Error en la API de AgendaPro",
+          details: error.response.data
+        });
+      }
+    });
+    
+
+  } catch (error) {
+    console.error("Error en modifyClientBook:", error.message);
+      if (error.response) {
+        return res.status(error.response.status).json({
+          error: "Error en la API de AgendaPro",
+          details: error.response.data
+        });
+      }
+
+      // Si hay otro tipo de error (por ejemplo, timeout o error de conexión)
+      return res.status(500).json({ error: "Error al actualizar las reserva del cliente" });
+  }
+
+}
+
+async function deleteClientBook(req, res) {
+
+  try {
+    const bookingId = req.params['bookingId'] ? req.params['bookingId'] : "";
+    const response = await axios.delete(`${URL_AGENDAPRO}/bookings/${bookingId}`,{
+      auth: {
+        username: AGENDAPRO_USERNAME,
+        password: AGENDAPRO_PASSWORD
+      }
+    });
+    return res.status(200).json({ response: "Reserva eliminada exitosamente" });
+
+    
+  } catch (error) {
+    console.error("Error en deleteClientBook:", error.message);
+      if (error.response) {
+        return res.status(error.response.status).json({
+          error: "Error en la API de AgendaPro",
+          details: error.response.data
+        });
+      }
+
+      // Si hay otro tipo de error (por ejemplo, timeout o error de conexión)
+      return res.status(500).json({ error: "Error al eliminar la reserva del cliente" });
+  }
+
+}
+
+async function createClientBook(req, res) {
+
+  try {
+    const { start, end, service_id, provider_id, first_name, last_name, email, phone, identification_number } = req.body;
+
+    // Datos a enviar
+    const data = qs.stringify({
+      start: start,
+      end: end,
+      service_id: service_id,
+      provider_id: provider_id,
+      first_name: first_name,
+      last_name: last_name,
+      email: email,
+      phone: phone,
+      identification_number: identification_number
+    });
+    // Configuración de la solicitud
+    const config = {
+      method: 'post',
+      url: `${URL_AGENDAPRO}/bookings`,
+      auth: {
+        username: AGENDAPRO_USERNAME,
+        password: AGENDAPRO_PASSWORD
+      },
+      headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      data: data
+    };
+    // Enviar la solicitud
+    axios(config)
+    .then(response => {
+        console.log('Respuesta:', response.data);
+        return res.status(200).json({ response: "Reserva creada exitosamente", detail: response.data });
+    })
+    .catch(error => {
+      console.error("Error en createClientBook:", error.message);
+      if (error.response) {
+        return res.status(error.response.status).json({
+          error: "Error en la API de AgendaPro",
+          details: error.response.data
+        });
+      }
+    });
+    
+
+  } catch (error) {
+    console.error("Error en createClientBook:", error.message);
+      if (error.response) {
+        return res.status(error.response.status).json({
+          error: "Error en la API de AgendaPro",
+          details: error.response.data
+        });
+      }
+
+      // Si hay otro tipo de error (por ejemplo, timeout o error de conexión)
+      return res.status(500).json({ error: "Error al crear la reserva del cliente" });
+  }
+  
+}
+module.exports = {getClients, getClientBookings, getClientId, deleteClientBook, modifyClientBook, createClientBook};

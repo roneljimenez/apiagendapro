@@ -1,6 +1,6 @@
 const express = require("express");
 const { validateToken } = require("./middleware");
-const { getClients,  getClientBookings, getClientId } = require("./controllers");
+const { getClients,  getClientBookings, getClientId, deleteClientBook, modifyClientBook, createClientBook } = require("./controllers");
 
 const router = express.Router();
 //asi es con validacion de JWT, de momento lo dejaremos abierto para efectos de pruebas de desarrollo
@@ -15,5 +15,14 @@ router.get("/getClientId/", getClientId);
 
 //obtiene las reservas de un cliente
 router.get("/client/bookings/", getClientBookings);
+
+//crea la reserva de un cliente
+router.post("/client/bookings/", createClientBook);
+
+//modifica una reserva
+router.patch("/client/bookings/:bookingId", modifyClientBook);
+
+//elimina o cancela una reserva
+router.delete("/client/bookings/:bookingId", deleteClientBook);
 
 module.exports = router;
