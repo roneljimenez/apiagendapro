@@ -347,7 +347,7 @@ async function getAvailableHours(req, res) {
     return res.status(404).json({ error: "No se encontraron horarios disponibles" });
     
   } catch (error) {
-    console.error("Error en getAvailableSlots:", error.message);
+    console.error("Error en getAvailableHours:", error.message);
       
     // Si axios devuelve un error de respuesta (por ejemplo, 401, 404, etc.)
     if (error.response) {

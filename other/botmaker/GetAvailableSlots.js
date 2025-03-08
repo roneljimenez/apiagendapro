@@ -8,21 +8,22 @@ const METHOD = 'GET';
 const AUTHENTICATION = '';
 
 //@constant('Variable where the response will be stored')
-const BM_RESULT_VAR_NAME = 'test_client_bookings';
+const BM_RESULT_VAR_NAME = 'test_available_slots';
 
 const IS_TEST = user.get('botmakerEnvironment') === 'DEVELOPMENT';
 const CUSTOMER_ID = context.userData._id_;
+const bookingSelected = user.get('test_book_selected');
+const service_id = user.get(`test_book_service_${bookingSelected}_id`);
+const location_id = user.get(`test_book_location_${bookingSelected}_id`);
 
 const OUTPUTS = {
     log: (text) => { IS_TEST ? result.text(text) : bmconsole.log(text); },
 };
 
-const clientEmail = user.get('test_client_email');
-
 const callServiceApiRest = () => {
     return rp({
         method: METHOD,
-        uri: URI+"client/bookings?search="+clientEmail,
+        uri: `${URI}/slots?service_id=${service_id}&location_id=${location_id}`,
         json: true,
         headers: {
             'Content-Type': 'application/json',
@@ -34,22 +35,19 @@ const callServiceApiRest = () => {
 
 const main = async() => {
     const response = await callServiceApiRest();
-  	const bookings = response.bookings || [];
+  	const available_slots = response.slots;
 
-    if (bookings.length > 0) {
-      let options = "";
-      bookings.forEach((book, index) => {
-        options += `\n ${index + 1}. Servicio: ${book.service},\n Lugar: ${book.location} \nFecha y Hora: ${book.start}\n`;
-        user.set(`test_book_${index + 1}_id`, book.id);
-        user.set(`test_book_service_${index + 1}_id`, book.service_id);
-        user.set(`test_book_location_${index + 1}_id`, book.location_id);
-      });
+  	if(available_slots.length > 0) {
+    	let options = "";
+      	available_slots.forEach((slot, index) => {
+        	options += `\n ${index + 1}. Fecha: ${slot.date}, \n`;
+        });
+      OUTPUTS.log(`opciones: ${options}`); // Success log
       user.set(BM_RESULT_VAR_NAME, options);
-    } else {
-      user.set(BM_RESULT_VAR_NAME, "No tienes horas agendadas.");
+    }else{
+      user.set(BM_RESULT_VAR_NAME, "No hay fechas disponibles.");
     }
-    //OUTPUTS.log(`Integration with api rest - ${CUSTOMER_ID} - ${JSON.stringify(response, null, 2)}`); // Success log
-
+    
 };
 
 main()
