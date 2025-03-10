@@ -8,13 +8,16 @@ const METHOD = 'GET';
 const AUTHENTICATION = '';
 
 //@constant('Variable where the response will be stored')
-const BM_RESULT_VAR_NAME = 'test_available_slots';
+const BM_RESULT_VAR_NAME = 'test_available_hours';
 
 const IS_TEST = user.get('botmakerEnvironment') === 'DEVELOPMENT';
 const CUSTOMER_ID = context.userData._id_;
 const bookingSelected = user.get('test_book_selected');
+const slotSelected = user.get('test_slot_selected');
 const service_id = user.get(`test_book_service_${bookingSelected}_id`);
 const location_id = user.get(`test_book_location_${bookingSelected}_id`);
+const date = user.get(`test_book_slot_${slotSelected}_id`);
+
 
 const OUTPUTS = {
     log: (text) => { IS_TEST ? result.text(text) : bmconsole.log(text); },
@@ -23,7 +26,7 @@ const OUTPUTS = {
 const callServiceApiRest = () => {
     return rp({
         method: METHOD,
-        uri: `${URI}/slots?service_id=${service_id}&location_id=${location_id}`,
+        uri: `${URI}/slots/hours?service_id=${service_id}&location_id=${location_id}&date=${date}`,
         json: true,
         headers: {
             'Content-Type': 'application/json',
@@ -35,20 +38,19 @@ const callServiceApiRest = () => {
 
 const main = async() => {
     const response = await callServiceApiRest();
-  	const available_slots = response.slots;
-
-  	if(available_slots.length > 0) {
+  	const available_hours = response.available_hours ? response.available_hours : "" ;
+  	if(available_hours.length > 0) {
     	let options = "";
-      	available_slots.forEach((slot, index) => {
-        	options += `\n ${index + 1}. Fecha: ${slot.date}, \n`;
-            user.set(`test_book_slot_${index + 1}_id`, slot.date);
+      	available_hours.forEach((hour, index) => {
+        	options += `\n ${index + 1}. Hora: ${hour.start_block}, \n Profesional: ${hour.provider_name} \n`;
+            user.set(`test_book_start_hour_${index + 1}_id`, slot.start_time);
+          	user.set(`test_book_end_hour_${index + 1}_id`, slot.end_time);
         });
-      OUTPUTS.log(`opciones: ${options}`); // Success log
+      OUTPUTS.log(`opciones de horario: ${options}`); // Success log
       user.set(BM_RESULT_VAR_NAME, options);
     }else{
       user.set(BM_RESULT_VAR_NAME, "No hay fechas disponibles.");
     }
-    
 };
 
 main()
