@@ -42,7 +42,7 @@ const main = async() => {
       bookings.forEach((book, index) => {
         date = new Date(book.start);
         year = date.getFullYear();
-        month = date.getgetMonth();
+        month = date.getMonth()+1;
         day = date.getDate();
         hours = date.getUTCHours();  // Hora en UTC
 		minutes = date.getUTCMinutes(); // Minutos en UTC
