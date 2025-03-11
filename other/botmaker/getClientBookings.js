@@ -38,8 +38,15 @@ const main = async() => {
 
     if (bookings.length > 0) {
       let options = "";
+      let date, year, month, day, hours, minutes;
       bookings.forEach((book, index) => {
-        options += `\n ${index + 1}. Servicio: ${book.service},\n Lugar: ${book.location} \nFecha y Hora: ${book.start}\n`;
+        date = new Date(book.start);
+        year = date.getFullYear();
+        month = date.getgetMonth();
+        day = date.getDate();
+        hours = date.getUTCHours();  // Hora en UTC
+		minutes = date.getUTCMinutes(); // Minutos en UTC
+        options += `\n ${index + 1}. Servicio: ${book.service},\n Lugar: ${book.location} \nFecha:${day}-${month}-${year} \n Hora: ${hours}:${minutes}\n`;
         user.set(`test_book_${index + 1}_id`, book.id);
         user.set(`test_book_service_${index + 1}_id`, book.service_id);
         user.set(`test_book_location_${index + 1}_id`, book.location_id);
