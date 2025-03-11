@@ -43,8 +43,8 @@ const main = async() => {
     	let options = "";
       	available_hours.forEach((hour, index) => {
         	options += `\n ${index + 1}. Hora: ${hour.start_block}, \n Profesional: ${hour.provider_name} \n`;
-            user.set(`test_book_start_hour_${index + 1}_id`, slot.start_time);
-          	user.set(`test_book_end_hour_${index + 1}_id`, slot.end_time);
+            user.set(`test_book_start_hour_${index + 1}_id`, hour.start_time);
+          	user.set(`test_book_end_hour_${index + 1}_id`, hour.end_time);
         });
       OUTPUTS.log(`opciones de horario: ${options}`); // Success log
       user.set(BM_RESULT_VAR_NAME, options);

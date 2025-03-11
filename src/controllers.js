@@ -93,8 +93,10 @@ async function getClientBookings(req, res) {
             password: AGENDAPRO_PASSWORD
           }
         });
+        //Filtra las reservas para devolver las que sean distinto a 5=canceladas, 6=no asistira
+        const filteredBookings = response.data.filter(booking => booking.status_id !== 5 && booking.status_id !== 6);
         // Responder con los datos obtenidos
-        return res.status(200).json({ bookings: response.data });
+        return res.status(200).json({ bookings: filteredBookings });
       }else{
         return res.status(500).json({ error: "Error al obtener las reservas del cliente" });
       }
