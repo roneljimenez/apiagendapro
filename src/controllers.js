@@ -8,6 +8,49 @@ const URL_AGENDAPRO = process.env.URL_AGENDAPRO;
 const AGENDAPRO_USERNAME = process.env.AGENDAPRO_USERNAME;
 const AGENDAPRO_PASSWORD = process.env.AGENDAPRO_PASSWORD;
 
+async function getServicesCategories(req, res) {
+  try {
+    const { location_id } = req.query;
+    if(location_id != ""){
+      const response = await axios.get(`${URL_AGENDAPRO}/locations/${location_id}/services`, {
+        auth: {
+          username: AGENDAPRO_USERNAME,
+          password: AGENDAPRO_PASSWORD
+        }
+      });
+      const services = response.data;
+      const uniqueCategories = [...new Set(services.map(s => s.category))];
+        return res.status(200).json(uniqueCategories);
+    }else{
+      return res.status(400).json({ error: 'Debe proporcionar una locación' });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: 'Error al obtener las categorías' });
+  }
+  
+}
+
+async function getServices(req, res) {
+  try {
+    const { location_id, category } = req.query;
+    if(location_id != "" && category !=""){
+      const response = await axios.get(`${URL_AGENDAPRO}/locations/${location_id}/services`, {
+        auth: {
+          username: AGENDAPRO_USERNAME,
+          password: AGENDAPRO_PASSWORD
+        }
+      });
+      const services = response.data;
+      const filteredServices = services.filter(s => s.category === category);
+      return res.status(200).json(filteredServices);
+    }else{
+      return res.status(500).json({ error: 'Debe proporcionar locación y categoría de servicio' });
+    }
+  } catch (error) {
+    return res.status(500).json({ error: 'Error al obtener las categorías' });
+  }
+  
+}
 
 async function getClients(req, res) {
 
@@ -26,8 +69,6 @@ async function getClients(req, res) {
       });
       // Responder con los datos obtenidos
       return res.json({ success: response.data });
-      //Mientras se aplica la llave de seguridad se cierra la verdadera respuesta
-      //return res.json({ success: "Jose Calveti" });
 
   } catch (error) {
       console.error("Error en getClients:", error.message);
@@ -364,4 +405,4 @@ async function getAvailableHours(req, res) {
   }
 }
 
-module.exports = {getClients, getClientBookings, getClientId, deleteClientBook, modifyClientBook, createClientBook, getAvailableSlots, getAvailableHours};
+module.exports = {getClients, getClientBookings, getClientId, deleteClientBook, modifyClientBook, createClientBook, getAvailableSlots, getAvailableHours, getServicesCategories, getServices};
