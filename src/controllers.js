@@ -20,7 +20,7 @@ async function getServicesCategories(req, res) {
       });
       const services = response.data;
       const uniqueCategories = [...new Set(services.map(s => s.category))];
-        return res.status(200).json(uniqueCategories);
+        return res.status(200).json({categories: uniqueCategories});
     }else{
       return res.status(400).json({ error: 'Debe proporcionar una locación' });
     }
