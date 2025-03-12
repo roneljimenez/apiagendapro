@@ -42,7 +42,7 @@ async function getServices(req, res) {
       });
       const services = response.data;
       const filteredServices = services.filter(s => s.category === category);
-      return res.status(200).json(filteredServices);
+      return res.status(200).json({services: filteredServices});
     }else{
       return res.status(500).json({ error: 'Debe proporcionar locación y categoría de servicio' });
     }
