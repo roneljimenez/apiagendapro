@@ -12,9 +12,9 @@ const BM_RESULT_VAR_NAME = 'test_available_slots';
 
 const IS_TEST = user.get('botmakerEnvironment') === 'DEVELOPMENT';
 const CUSTOMER_ID = context.userData._id_;
-const bookingSelected = user.get('test_book_selected');
-const service_id = user.get(`test_book_service_${bookingSelected}_id`);
-const location_id = user.get(`test_book_location_${bookingSelected}_id`);
+const serviceSelected = user.get("test_service_selected");
+const service_id = user.get(`test_service_${serviceSelected}_id`);
+const location_id = "84887";
 
 const OUTPUTS = {
     log: (text) => { IS_TEST ? result.text(text) : bmconsole.log(text); },
@@ -50,7 +50,6 @@ const main = async() => {
     }else{
       user.set(BM_RESULT_VAR_NAME, "No hay fechas disponibles.");
     }
-    
 };
 
 main()

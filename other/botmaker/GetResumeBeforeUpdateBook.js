@@ -1,6 +1,7 @@
 const IS_TEST = user.get('botmakerEnvironment') === 'DEVELOPMENT';
 const slotSelected = user.get('test_slot_selected');
-const slotDate = user.get(`test_book_slot_${slotSelected}_id`);
+const slotDate = new Date(user.get(`test_book_slot_${slotSelected}_id`));
+const formatedSlotDate = new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "2-digit", year: "numeric" }).format(slotDate);
 const hourSelected = user.get('test_hour_selected');
 const slotHour = user.get(`test_book_start_hour_${hourSelected}_id`);
 const date = new Date(slotHour);
@@ -12,7 +13,7 @@ const OUTPUTS = {
 
 
 const main = async () => {
-    OUTPUTS.log(`Has seleccionado: Fecha: ${slotDate} en el horario: ${hours}:${minutes}. ¿Están los datos correctos? `);
+    OUTPUTS.log(`\n Has seleccionado: \n Fecha: ${formatedSlotDate} en el horario: ${hours}:${minutes}.\n ¿Están los datos correctos? `);
 };
     
 main()
