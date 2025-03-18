@@ -40,6 +40,7 @@ const main = async() => {
           let options = "";
           services.forEach((service, index) => {
               options += `\n ${index + 1}. Nombre: ${service.name} \n Duración: ${service.duration}mins\n`;
+              user.set(`test_service_name_${index + 1}_id`, service.name);
               user.set(`test_service_${index + 1}_id`, service.id);
           });
         OUTPUTS.log(`Servicios: ${options}`); // Success log

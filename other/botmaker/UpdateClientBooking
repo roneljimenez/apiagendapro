@@ -48,8 +48,9 @@ const main = async() => {
     const response = await callServiceApiRest();
   	if(!response.detail){
     	user.set(BM_RESULT_VAR_NAME, "Error");
+      OUTPUTS.log(`Oops! Ha ocurrido un error. Por favor vuelve a intentarlo en unos minutos.`); // error log
     }else{
-      OUTPUTS.log(`Resultado: ${response.detail}`); // Success log
+      OUTPUTS.log(`Tu agenda ha sido actualizada, recibirás el detalle en tu correo electrónico.`); // Success log
       user.set(BM_RESULT_VAR_NAME, JSON.stringify(response.response));
     }
     
@@ -60,6 +61,6 @@ main()
         // Code on error
         const errorMessage = `[Integration with api rest] :  Error - ${CUSTOMER_ID} - ${err.message}`;
         user.set('ca_error', errorMessage);
-        OUTPUTS.log(errorMessage);
+        OUTPUTS.log(`Oops! Ha ocurrido un error. Por favor vuelve a intentarlo en unos minutos.`); // error log
     })
     .finally(result.done);

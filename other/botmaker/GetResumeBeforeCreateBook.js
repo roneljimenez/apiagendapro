@@ -10,6 +10,7 @@ const hours = date.getUTCHours();  // Hora en UTC
 const minutes = date.getUTCMinutes(); // Minutos en UTC
 const serviceSelected = user.get("test_service_selected");
 const service_id = user.get(`test_service_${serviceSelected}_id`);
+const service_name = user.get(`test_service_name_${serviceSelected}_id`);
 const location_id = "84887";
 
 const clientInfo = {
@@ -29,6 +30,7 @@ const OUTPUTS = {
 
 const main = async() => {
    OUTPUTS.log(`\n Has seleccionado: \n 
+   ${service_name}.\n 
    Fecha: ${formatedSlotDate} en el horario: ${hours}:${minutes}.\n 
    Profesional: ${provider_name}\n 
    Nombre y Apellido: ${clientInfo.name} ${clientInfo.lastName}\n

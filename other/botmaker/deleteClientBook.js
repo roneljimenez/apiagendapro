@@ -36,8 +36,13 @@ const callServiceApiRest = () => {
 
 const main = async() => {
     const response = await callServiceApiRest();
-    OUTPUTS.log(`Integration with api rest - ${CUSTOMER_ID} - ${JSON.stringify(response, null, 2)}`); // Success log
-    user.set(BM_RESULT_VAR_NAME, JSON.stringify(response));
+  	if(response.response){
+      OUTPUTS.log(`Su reserva ha sido eliminada exitosamente.`); // Success log
+      user.set(BM_RESULT_VAR_NAME, JSON.stringify(response));
+    }else{
+    	OUTPUTS.log(`Ooops! Ha ocurrido un error. Por favor vuelve a intentarlo en unos minutos.`); // error log
+    }
+    
 };
 
 main()
@@ -45,6 +50,6 @@ main()
         // Code on error
         const errorMessage = `[Integration with api rest] :  Error - ${CUSTOMER_ID} - ${err.message}`;
         user.set('ca_error', errorMessage);
-        OUTPUTS.log(errorMessage);
+        OUTPUTS.log(`Ooops! Ha ocurrido un error. Por favor vuelve a intentarlo en unos minutos.`); // error log
     })
     .finally(result.done);
