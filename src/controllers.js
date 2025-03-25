@@ -30,6 +30,34 @@ async function getServicesCategories(req, res) {
   
 }
 
+const getServiceDescription = async (id) => {
+  try {
+      const response = await axios.get(`${URL_AGENDAPRO}/services/${id}`, {
+        auth: {
+          username: AGENDAPRO_USERNAME,
+          password: AGENDAPRO_PASSWORD
+        }
+      });
+
+      //error de tipeo de la api de agendapro devuelve decription sin la s
+      return response.data.decription;
+  } catch (error) {
+      console.error(`Error obteniendo descripción para el ID ${id}:`, error.message);
+      return "Descripción no disponible";
+  }
+};
+
+const enrichServicesWithDescription = async (services) => {
+  const enrichedServices = await Promise.all(
+      services.map(async (service) => {
+          const description = await getServiceDescription(service.id);
+          return { ...service, description }; // Agregar la descripción al objeto original
+      })
+  );
+
+  return enrichedServices;
+};
+
 async function getServices(req, res) {
   try {
     const { location_id, category } = req.query;
@@ -41,8 +69,12 @@ async function getServices(req, res) {
         }
       });
       const services = response.data;
-      const filteredServices = services.filter(s => s.category === category);
-      return res.status(200).json({services: filteredServices});
+      const filteredServices = services.filter(s => 
+        s.category === category && 
+        !/(sesiones|tratamiento|plan)/i.test(s.name)
+      );
+      const servicesWithDescriptions = await enrichServicesWithDescription(filteredServices);
+      return res.status(200).json({services: servicesWithDescriptions});
     }else{
       return res.status(500).json({ error: 'Debe proporcionar locación y categoría de servicio' });
     }
