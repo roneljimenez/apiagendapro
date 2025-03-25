@@ -346,7 +346,7 @@ async function getAvailableSlots(req, res) {
     if (!service_id || !location_id) {
       return res.status(400).json({ error: "Se requieren service_id y location_id" });
     }
-    let date = DateTime.now().startOf('day');
+    let date = DateTime.now().plus({ days: 1 }).startOf('day');
     const availableSlots = [];
     let daysChecked = 0;
     
