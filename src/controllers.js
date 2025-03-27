@@ -119,6 +119,46 @@ async function getClients(req, res) {
 
 }
 
+async function getClientInfo(req, res){
+  try {
+    // Verifica que las variables de entorno estén definidas y el query search venga con contenido
+    if (!URL_AGENDAPRO || !AGENDAPRO_USERNAME || !AGENDAPRO_PASSWORD || !req.query.search || req.query.search == "") {
+      return res.status(500).json({ error: "Faltan parámetros en la solicitud" });
+    }
+    const email = req.query.search;
+    const response = await axios.get(`${URL_AGENDAPRO}/clients?search=${email}`, {
+      auth: {
+        username: AGENDAPRO_USERNAME,
+        password: AGENDAPRO_PASSWORD
+      }
+    });
+    const clientInfo = {
+      firstName : response.data[0].first_name,
+      lastName : response.data[0].last_name,
+      email : response.data[0].email,
+      phone : response.data[0].phone,
+      rut : response.data[0].identification_number
+    }
+    console.log(clientInfo)
+    //¿Es posible que pueda responder más de uno registro con el mismo correo?
+    return res.status(200).json({data : clientInfo});
+  } catch (error) {
+    console.error("Error en getClientInfo:", error.message);
+      
+      // Si axios devuelve un error de respuesta (por ejemplo, 401, 404, etc.)
+      if (error.response) {
+        return res.status(error.response.status).json({
+          error: "Error en la API de AgendaPro",
+          details: error.response.data
+        });
+      }
+
+      // Si hay otro tipo de error (por ejemplo, timeout o error de conexión)
+      res.status(500).json({ error: "Error al obtener información del cliente" });
+  }
+
+}
+
 async function getClientId(email, res){
   try {
     
@@ -437,4 +477,4 @@ async function getAvailableHours(req, res) {
   }
 }
 
-module.exports = {getClients, getClientBookings, getClientId, deleteClientBook, modifyClientBook, createClientBook, getAvailableSlots, getAvailableHours, getServicesCategories, getServices};
+module.exports = {getClients, getClientBookings, getClientInfo, getClientId, deleteClientBook, modifyClientBook, createClientBook, getAvailableSlots, getAvailableHours, getServicesCategories, getServices};
