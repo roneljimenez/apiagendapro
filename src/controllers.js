@@ -132,6 +132,9 @@ async function getClientInfo(req, res){
         password: AGENDAPRO_PASSWORD
       }
     });
+    if(response.status == 200 && response.data.length == 0){
+      return res.status(404).json({ error: "No existe" });
+    }
     const clientInfo = {
       firstName : response.data[0].first_name,
       lastName : response.data[0].last_name,
@@ -139,7 +142,6 @@ async function getClientInfo(req, res){
       phone : response.data[0].phone,
       rut : response.data[0].identification_number
     }
-    console.log(clientInfo)
     //¿Es posible que pueda responder más de uno registro con el mismo correo?
     return res.status(200).json({data : clientInfo});
   } catch (error) {
