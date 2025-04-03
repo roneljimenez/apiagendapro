@@ -13,8 +13,9 @@ const BM_RESULT_VAR_NAME = 'test_service_selected';
 const IS_TEST = user.get('botmakerEnvironment') === 'DEVELOPMENT';
 const CUSTOMER_ID = context.userData._id_;
 const location_id = "84887";
-const categorySelected = user.get('test_service_category_selected');
-const category = user.get(`test_service_category_${categorySelected}_id`);
+const stringCategorySelected = user.get('test_service_category_selected');
+const categorySelected = stringCategorySelected;
+
 
 const OUTPUTS = {
     log: (text) => { IS_TEST ? result.text(text) : bmconsole.log(text); },
@@ -23,7 +24,7 @@ const OUTPUTS = {
 const callServiceApiRest = () => {
     return rp({
         method: METHOD,
-        uri: URI+"services/?location_id="+location_id+"&category="+category,
+        uri: URI+"services/?location_id="+location_id+"&category="+categorySelected,
         json: true,
         headers: {
             'Content-Type': 'application/json',
@@ -35,25 +36,25 @@ const callServiceApiRest = () => {
 
 const main = async() => {
     const response = await callServiceApiRest();
-  	const services = response.services;
-  	if(services.length > 0) {
-          let options = "";
-          services.forEach((service, index) => {
-              options += `\n ${index + 1}. Nombre: ${service.name} \n 
-              Duración: ${service.duration}mins\n
-              `;
-              if(service.description && service.description != ""){
-                 options +=  `\n Descripción: ${service.description} \n`;
-              }
-              
-              user.set(`test_service_name_${index + 1}_id`, service.name);
-              user.set(`test_service_${index + 1}_id`, service.id);
-          });
-        OUTPUTS.log(`Servicios: ${options}`); // Success log
-        user.set(BM_RESULT_VAR_NAME, options);
-      }else{
-        user.set(BM_RESULT_VAR_NAME, "No hay servicios disponibles.");
-      }
+  	const services = response.services ? response.services : "";
+    const moreServicesOption = { id: 99, name: "Ver más servicios" };
+    const goBackOption = { id: 100, name: "Volver al inicio" };
+    let myJSONList = services.map((service, index) => {return {id:index, name:service.name, idService: service.id};});
+  
+  	if(services.length >= 9) {
+      
+      	  let firstGroup = [];
+  		  let nextServices = [];
+		  nextServices = myJSONList.slice(10);
+          firstGroup = [...firstGroup, moreServicesOption];
+          nextServices = [...nextServices, goBackOption];
+          user.set('test_available_services', JSON.stringify(firstGroup));
+          user.set('test_next_available_services', JSON.stringify(nextCategories));
+      
+    }else{
+        myJSONList = [...myJSONList, goBackOption];
+        user.set('test_available_services', JSON.stringify(myJSONList));
+    }
 };
 
 main()

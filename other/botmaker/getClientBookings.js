@@ -35,7 +35,6 @@ const callServiceApiRest = () => {
 const main = async() => {
     const response = await callServiceApiRest();
   	const bookings = response.bookings || [];
-
     if (bookings.length > 0) {
       let options = "";
       let date, year, month, day, hours, minutes;
@@ -52,8 +51,11 @@ const main = async() => {
         user.set(`test_book_location_${index + 1}_id`, book.location_id);
       });
       user.set(BM_RESULT_VAR_NAME, options);
+      OUTPUTS.log(`Reservas agendadas: ${options}`);
+      user.set('test_has_bookings', true);
     } else {
       user.set(BM_RESULT_VAR_NAME, "No tienes horas agendadas.");
+      user.set('test_has_bookings', false);
     }
     //OUTPUTS.log(`Integration with api rest - ${CUSTOMER_ID} - ${JSON.stringify(response, null, 2)}`); // Success log
 
@@ -64,6 +66,7 @@ main()
         // Code on error
         const errorMessage = `[Integration with api rest] :  Error - ${CUSTOMER_ID} - ${err.message}`;
         user.set('ca_error', errorMessage);
-        OUTPUTS.log(errorMessage);
+   		user.set('test_has_bookings', false);
+        //OUTPUTS.log(errorMessage);
     })
     .finally(result.done);

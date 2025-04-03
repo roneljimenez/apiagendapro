@@ -66,7 +66,7 @@ const main = async() => {
     if(!response.detail){
     	user.set(BM_RESULT_VAR_NAME, "Error");
     }else{
-      OUTPUTS.log(`Resultado: ${response.detail}`); // Success log
+      OUTPUTS.log(`${response.response}`); // Success log
       user.set(BM_RESULT_VAR_NAME, JSON.stringify(response.response));
     }
 };
