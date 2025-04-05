@@ -12,8 +12,7 @@ const BM_RESULT_VAR_NAME = 'test_available_slots';
 
 const IS_TEST = user.get('botmakerEnvironment') === 'DEVELOPMENT';
 const CUSTOMER_ID = context.userData._id_;
-const serviceSelected = user.get("test_service_selected");
-const service_id = user.get(`test_service_${serviceSelected}_id`);
+const service_id = JSON.parse(user.get("test_service_selected")).idService;
 const location_id = "84887";
 
 const OUTPUTS = {
@@ -35,18 +34,18 @@ const callServiceApiRest = () => {
 
 const main = async() => {
     const response = await callServiceApiRest();
-  	const available_slots = response.slots;
-
+  	const available_slots = response.slots ? response.slots : "";
+    const moreServicesOption = { id: 99, name: "Ver más servicios" };
+    const goBackOption = { id: 100, name: "Volver al inicio" };
+    let myJSONList = available_slots.map((slot, index) => {
+      const fecha = new Date(slot.date);
+      const fechaFormateada = new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "2-digit", year: "numeric" }).format(fecha);
+      return {id:index, name:fechaFormateada, date: slot.date};
+    });
+  
   	if(available_slots.length > 0) {
-    	let options = "";
-      	available_slots.forEach((slot, index) => {
-          const fecha = new Date(slot.date);
-		  const fechaFormateada = new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "2-digit", year: "numeric" }).format(fecha);
-        	options += `\n ${index + 1}. Fecha: ${fechaFormateada}, \n`;
-            user.set(`test_book_slot_${index + 1}_id`, slot.date);
-        });
-      OUTPUTS.log(`opciones: ${options}`); // Success log
-      user.set(BM_RESULT_VAR_NAME, options);
+      //me falta agregar la opción de volver atrás
+      user.set('test_available_slots', JSON.stringify(myJSONList));
     }else{
       user.set(BM_RESULT_VAR_NAME, "No hay fechas disponibles.");
     }

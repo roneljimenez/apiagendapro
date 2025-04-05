@@ -13,8 +13,7 @@ const BM_RESULT_VAR_NAME = 'test_service_selected';
 const IS_TEST = user.get('botmakerEnvironment') === 'DEVELOPMENT';
 const CUSTOMER_ID = context.userData._id_;
 const location_id = "84887";
-const stringCategorySelected = user.get('test_service_category_selected');
-const categorySelected = stringCategorySelected;
+const categorySelected = user.get('test_service_category_selected');
 
 
 const OUTPUTS = {
@@ -45,6 +44,7 @@ const main = async() => {
       
       	  let firstGroup = [];
   		  let nextServices = [];
+          firstGroup = myJSONList.slice(0, 9);
 		  nextServices = myJSONList.slice(10);
           firstGroup = [...firstGroup, moreServicesOption];
           nextServices = [...nextServices, goBackOption];

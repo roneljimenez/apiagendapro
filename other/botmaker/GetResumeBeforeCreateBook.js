@@ -1,16 +1,10 @@
 const IS_TEST = user.get('botmakerEnvironment') === 'DEVELOPMENT';
-const slotSelected = user.get('test_slot_selected');
-const slotDate = new Date(user.get(`test_book_slot_${slotSelected}_id`));
-const formatedSlotDate = new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "2-digit", year: "numeric" }).format(slotDate);
-const hourSelected = user.get('test_hour_selected');
-const provider_name = user.get(`test_book_provider_name_${hourSelected}_id`);
-const slotHour = user.get(`test_book_start_hour_${hourSelected}_id`);
-const date = new Date(slotHour);
-const hours = date.getUTCHours();  // Hora en UTC
-const minutes = date.getUTCMinutes().toString().padStart(2, '0'); // Minutos en UTC
-const serviceSelected = user.get("test_service_selected");
-const service_id = user.get(`test_service_${serviceSelected}_id`);
-const service_name = user.get(`test_service_name_${serviceSelected}_id`);
+const formatedSlotDate = JSON.parse(user.get('test_slot_selected')).name;
+const hourSelected = JSON.parse(user.get('test_hour_selected'));
+const provider_name = hourSelected.providerName;
+const slotHour = hourSelected.name;
+const service_id = JSON.parse(user.get("test_service_selected")).idService;
+const service_name = JSON.parse(user.get("test_service_selected")).name;
 const location_id = "84887";
 
 const clientInfo = {
@@ -31,7 +25,7 @@ const OUTPUTS = {
 const main = async() => {
    OUTPUTS.log(`\n Has seleccionado: \n 
    ${service_name}.\n 
-   Fecha: ${formatedSlotDate} en el horario: ${hours}:${minutes}.\n 
+   Fecha: ${formatedSlotDate} en el horario: ${slotHour}.\n 
    Profesional: ${provider_name}\n 
    Nombre y Apellido: ${clientInfo.name} ${clientInfo.lastName}\n
    Email: ${clientInfo.email}\n

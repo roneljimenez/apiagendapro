@@ -4,8 +4,8 @@ const OUTPUTS = {
 };
 
 const main = async () => {
-      let categorySelected = JSON.parse(user.get('test_service_category_selected')).name;
-  	  user.set('test_service_category_selected', categorySelected);
+      let serviceSelected = JSON.parse(user.get('test_service_selected')).name;
+  	  user.set('test_service_name_selected', serviceSelected);
     };
     
 main()
