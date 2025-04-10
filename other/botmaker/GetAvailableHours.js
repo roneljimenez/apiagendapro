@@ -12,11 +12,9 @@ const BM_RESULT_VAR_NAME = 'test_available_hours';
 
 const IS_TEST = user.get('botmakerEnvironment') === 'DEVELOPMENT';
 const CUSTOMER_ID = context.userData._id_;
-const bookingSelected = user.get('test_book_selected');
-const slotSelected = user.get('test_slot_selected');
-const service_id = user.get(`test_book_service_${bookingSelected}_id`);
-const location_id = user.get(`test_book_location_${bookingSelected}_id`);
-const date = user.get(`test_book_slot_${slotSelected}_id`);
+const service_id = JSON.parse(user.get(`test_book_selected`)).idService;
+const location_id = JSON.parse(user.get(`test_book_selected`)).idLocation;
+const date = JSON.parse(user.get(`test_slot_selected`)).date;
 
 
 const OUTPUTS = {
@@ -39,15 +37,42 @@ const callServiceApiRest = () => {
 const main = async() => {
     const response = await callServiceApiRest();
   	const available_hours = response.available_hours ? response.available_hours : "" ;
-  	if(available_hours.length > 0) {
-    	let options = "";
-      	available_hours.forEach((hour, index) => {
-        	options += `\n ${index + 1}. Hora: ${hour.start_block}, \n Profesional: ${hour.provider_name} \n`;
-            user.set(`test_book_start_hour_${index + 1}_id`, hour.start_time);
-          	user.set(`test_book_end_hour_${index + 1}_id`, hour.end_time);
-        });
-      OUTPUTS.log(`opciones de horario: ${options}`); // Success log
-      user.set(BM_RESULT_VAR_NAME, options);
+  	const moreHoursOption = { id: 99, name: "Ver más horas" };
+    const goBackOption = { id: 100, name: "Volver al inicio" };
+  	let myJSONList = available_hours.map((hour, index) => {
+      return {id:index, name:hour.start_block, startDate: hour.start_time, endDate: hour.end_time, providerId: hour.provider_id, providerName: hour.provider_name};
+    });
+  
+if(available_hours.length > 0) {
+      
+      let options = "";
+      
+      if(myJSONList.length >= 9 ){
+        
+          let firstGroup = [];
+  		  let nextHours = [];
+          firstGroup = myJSONList.slice(0, 9);
+		  nextHours = myJSONList.slice(10);
+          firstGroup = [...firstGroup, moreHoursOption];
+          nextHours = [...nextHours, goBackOption];
+          user.set('test_available_hours', JSON.stringify(firstGroup));
+          user.set('test_next_available_hours', JSON.stringify(nextHours));
+        
+      	  firstGroup.forEach((hour, index) => {
+        	options += `\n ${index + 1}. Hora: ${hour.name}, \n Profesional: ${hour.providerName} \n`;
+          });
+
+      }else{
+        
+      	  	myJSONList = [...myJSONList, goBackOption];
+    		user.set('test_available_hours', JSON.stringify(myJSONList));
+        	myJSONList.forEach((hour, index) => {
+        		options += `\n ${index + 1}. Hora: ${hour.name}, \n Profesional: ${hour.providerName} \n`;
+            });
+      }
+	  
+       OUTPUTS.log(`opciones de horario: ${options}`); // Success log
+      
     }else{
       user.set(BM_RESULT_VAR_NAME, "No hay fechas disponibles.");
     }

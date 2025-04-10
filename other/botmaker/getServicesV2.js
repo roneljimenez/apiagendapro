@@ -49,7 +49,7 @@ const main = async() => {
           firstGroup = [...firstGroup, moreServicesOption];
           nextServices = [...nextServices, goBackOption];
           user.set('test_available_services', JSON.stringify(firstGroup));
-          user.set('test_next_available_services', JSON.stringify(nextCategories));
+          user.set('test_next_available_services', JSON.stringify(nextServices));
       
     }else{
         myJSONList = [...myJSONList, goBackOption];

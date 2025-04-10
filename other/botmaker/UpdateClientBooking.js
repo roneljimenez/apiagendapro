@@ -13,11 +13,9 @@ const BM_RESULT_VAR_NAME = 'test_update_status';
 
 const IS_TEST = user.get('botmakerEnvironment') === 'DEVELOPMENT';
 const CUSTOMER_ID = context.userData._id_;
-const bookingSelected = user.get('test_book_selected');
-const bookingId = user.get(`test_book_${bookingSelected}_id`);
-const hourSelected = user.get('test_hour_selected');
-const startDate = user.get(`test_book_start_hour_${hourSelected}_id`);
-const endDate = user.get(`test_book_end_hour_${hourSelected}_id`);
+const bookingId = JSON.parse(user.get('test_book_selected')).idBook;
+const startDate = JSON.parse(user.get('test_hour_selected')).startDate;
+const endDate = JSON.parse(user.get('test_hour_selected')).endDate;
 const status_id = 1;
 const formData = querystring.stringify({
   start: startDate,

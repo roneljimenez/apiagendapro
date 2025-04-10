@@ -1,16 +1,12 @@
 const IS_TEST = user.get('botmakerEnvironment') === 'DEVELOPMENT';
-const formatedSlotDate = JSON.parse(user.get('test_slot_selected')).name;
-const hourSelected = JSON.parse(user.get('test_hour_selected'));
-const slotHour = hourSelected.name;
-
 const OUTPUTS = {
     log: (text) => { IS_TEST ? result.text(text) : bmconsole.log(text); },
 };
 
-
 const main = async () => {
-    OUTPUTS.log(`\n Has seleccionado: \n Fecha: ${formatedSlotDate} en el horario: ${slotHour}.\n ¿Están los datos correctos? `);
-};
+      let hourSelected = JSON.parse(user.get('test_hour_selected')).name;
+  	  user.set('test_hour_name_selected', hourSelected);
+    };
     
 main()
     .catch(err => {
@@ -20,3 +16,4 @@ main()
         bmconsole.log(errorMessage); // Log Error
     })
     .finally(result.done);
+

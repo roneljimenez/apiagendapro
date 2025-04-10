@@ -12,9 +12,7 @@ const BM_RESULT_VAR_NAME = 'test_booking_action_response';
 
 const IS_TEST = user.get('botmakerEnvironment') === 'DEVELOPMENT';
 const CUSTOMER_ID = context.userData._id_;
-const bookingSelected = user.get('test_book_selected');
-const bookIdString = `test_book_${bookingSelected}_id`;
-const bookId = user.get(bookIdString);
+const bookId = JSON.parse(user.get('test_book_selected')).idBook;
 
 
 const OUTPUTS = {
