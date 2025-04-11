@@ -1,6 +1,6 @@
 const express = require("express");
 const { validateToken } = require("./middleware");
-const { getClients, getClientInfo,  getClientBookings, getClientId, deleteClientBook, modifyClientBook, createClientBook, getAvailableSlots, getAvailableHours, getServicesCategories, getServices } = require("./controllers");
+const { getClients, getClientInfo,  getClientBookings, getClientId, deleteClientBook, modifyClientBook, createClientBook, getAvailableSlots, getAvailableSlotsByServiceByProvider, getAvailableHours, getServicesCategories, getServices } = require("./controllers");
 
 const router = express.Router();
 //asi es con validacion de JWT, de momento lo dejaremos abierto para efectos de pruebas de desarrollo
@@ -40,6 +40,9 @@ router.delete("/client/bookings/:bookingId", deleteClientBook);
 
 //obtiene fechas disponibles
 router.get("/slots", getAvailableSlots);
+
+//obtiene fechas disponibles por proveedor por servicio
+router.get("/slots", getAvailableSlotsByServiceByProvider);
 
 //obtiene fechas disponibles
 router.get("/slots/hours", getAvailableHours);

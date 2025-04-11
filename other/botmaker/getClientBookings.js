@@ -41,12 +41,20 @@ const main = async () => {
     const moreBookingsOption = { id: 99, name: 'Ver más reservas' };
     const goBackOption = { id: 100, name: 'Volver al inicio' };
     let myJSONList = bookings.map((book, index) => {
+      const date = new Date(book.start);
+     const  year = date.getFullYear();
+     const  month = date.getMonth() + 1;
+     const  day = date.getDate();
+     const  slotDate = `${year}-${month}-${day}`;
+     const  fechaFormateada = new Intl.DateTimeFormat("es-CL", { day: "2-digit", month: "2-digit", year: "numeric" }).format(date);
       return {
         id: index,
         name: index+1,
         idBook: book.id,
         idService: book.service_id,
         idLocation: book.location_id,
+        slotDate: slotDate,
+        fechaFormateada: fechaFormateada
       };
     });
     let options = '';

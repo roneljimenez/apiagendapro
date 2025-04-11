@@ -441,6 +441,64 @@ async function getAvailableSlots(req, res) {
   }
 }
 
+async function getAvailableSlotsByServiceByProvider(req, res) {
+  try {
+    const { service_id, location_id, provider_id } = req.query;
+    if (!service_id || !location_id) {
+      return res.status(400).json({ error: "Se requieren service_id y location_id" });
+    }
+    let date = DateTime.now().plus({ days: 1 }).startOf('day');
+    const availableSlots = [];
+    let daysChecked = 0;
+    
+    while (availableSlots.length < 4 && daysChecked < 30) { // Límite de 30 días para evitar bucles infinitos
+        const formattedDate = date.toISODate();
+        
+        try {
+            const response = await axios.get(`${URL_AGENDAPRO}/services/${service_id}/available_hours`, {
+                params: { location_id, date: formattedDate },
+                auth: {
+                  username: AGENDAPRO_USERNAME,
+                  password: AGENDAPRO_PASSWORD
+                }
+            });
+            
+            if (response.data.available_hours && response.data.available_hours.length > 0) {
+              const filteredHours = provider_id
+              ? response.data.available_hours.filter(hour => hour.provider_id == provider_id)
+              : "";
+              if(filteredHours.length > 0){availableSlots.push({ date: formattedDate });}
+            }
+        } catch (error) {
+            console.error(`Error al consultar la API para la fecha ${formattedDate}:`, error.message);
+        }
+
+        date = date.plus({ days: 1 });
+        daysChecked++;
+    }
+
+    if (availableSlots.length === 0) {
+      return res.status(404).json({ error: "No se encontraron horarios disponibles" });
+    }
+
+    return res.status(200).json({slots:availableSlots});
+
+  } catch (error) {
+    console.error("Error en getAvailableSlots:", error.message);
+      
+    // Si axios devuelve un error de respuesta (por ejemplo, 401, 404, etc.)
+    if (error.response) {
+      return res.status(error.response.status).json({
+        error: "Error en la API de AgendaPro",
+        details: error.response.data
+      });
+    }
+
+    // Si hay otro tipo de error (por ejemplo, timeout o error de conexión)
+    res.status(500).json({ error: "Error al obtener fechas disponibles" });
+  }
+}
+
 async function getAvailableHours(req, res) {
   try {
 
@@ -479,4 +537,4 @@ async function getAvailableHours(req, res) {
   }
 }
 
-module.exports = {getClients, getClientBookings, getClientInfo, getClientId, deleteClientBook, modifyClientBook, createClientBook, getAvailableSlots, getAvailableHours, getServicesCategories, getServices};
+module.exports = {getClients, getClientBookings, getClientInfo, getClientId, deleteClientBook, modifyClientBook, createClientBook, getAvailableSlots, getAvailableSlotsByServiceByProvider, getAvailableHours, getServicesCategories, getServices};
