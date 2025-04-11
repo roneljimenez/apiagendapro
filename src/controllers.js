@@ -444,8 +444,8 @@ async function getAvailableSlots(req, res) {
 async function getAvailableSlotsByServiceByProvider(req, res) {
   try {
     const { service_id, location_id, provider_id } = req.query;
-    if (!service_id || !location_id) {
-      return res.status(400).json({ error: "Se requieren service_id y location_id" });
+    if (!service_id || !location_id || !provider_id) {
+      return res.status(400).json({ error: "Se requieren service_id y location_id y provider_id" });
     }
     let date = DateTime.now().plus({ days: 1 }).startOf('day');
     const availableSlots = [];

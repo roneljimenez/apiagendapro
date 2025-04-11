@@ -42,7 +42,7 @@ router.delete("/client/bookings/:bookingId", deleteClientBook);
 router.get("/slots", getAvailableSlots);
 
 //obtiene fechas disponibles por proveedor por servicio
-router.get("/slots", getAvailableSlotsByServiceByProvider);
+router.get("/slots/provider", getAvailableSlotsByServiceByProvider);
 
 //obtiene fechas disponibles
 router.get("/slots/hours", getAvailableHours);
